@@ -1,4 +1,4 @@
-# modules/s3/main.tf
+# modules/s3/main.tf .
 resource "aws_s3_bucket" "ingestion_bucket" {
   bucket = var.api_ingestion_bucket_name
   
