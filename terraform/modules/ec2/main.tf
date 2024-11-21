@@ -1,44 +1,30 @@
-# modules/ec2/main.tf
-resource "aws_instance" "data_transfer" {
-  ami           = var.ami_id
-  instance_type = var.instance_type
-  key_name      = var.key_pair_name
-
-  iam_instance_profile = aws_iam_instance_profile.data_transfer_profile.name
-
-  tags = {
-    Name = "${var.project_name}-data-transfer"
-    Environment = var.environment
-  }
-
-  user_data = templatefile("${path.module}/../../scripts/airflow_setup.sh", {
-    region = var.aws_region
-  })
-
-  vpc_security_group_ids = [aws_security_group.data_transfer_sg.id]
+variable "project_name" {
+  description = "Name of the project"
+  type        = string
 }
 
-resource "aws_iam_instance_profile" "data_transfer_profile" {
-  name = "${var.project_name}-ec2-profile"
-  role = var.ec2_role_name
+variable "environment" {
+  description = "Environment (dev/staging/prod)"
+  type        = string
 }
 
-resource "aws_security_group" "data_transfer_sg" {
-  name        = "${var.project_name}-data-transfer-sg"
-  description = "Security group for data transfer EC2 instance"
-
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["YOUR_IP/32"]  # Replace with your IP
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+variable "ami_id" {
+  description = "AMI ID for the EC2 instance"
+  type        = string
 }
 
+variable "instance_type" {
+  description = "EC2 instance type"
+  type        = string
+  default     = "t3.medium"
+}
+
+variable "key_pair_name" {
+  description = "EC2 key pair name"
+  type        = string
+}
+
+variable "ec2_role_name" {
+  description = "IAM role name for EC2 instance"
+  type        = string
+}
