@@ -1,4 +1,3 @@
-# modules/ec2/variables.tf
 variable "project_name" {
   description = "Name of the project"
   type        = string
@@ -29,9 +28,3 @@ variable "ec2_role_name" {
   description = "IAM role name for EC2 instance"
   type        = string
 }
-
-variable "aws_region" {
-  description = "AWS region"
-  type        = string
-}
-
