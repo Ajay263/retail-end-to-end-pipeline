@@ -40,8 +40,7 @@ jobs:
         terraform init \
           -backend-config="bucket=${{ secrets.TF_STATE_BUCKET }}" \
           -backend-config="key=data-pipeline/terraform.tfstate" \
-          -backend-config="region=${{ env.AWS_REGION }}" \
-          -lock=false
+          -backend-config="region=${{ env.AWS_REGION }}"
     
     - name: Terraform Validate
       run: |
@@ -52,14 +51,15 @@ jobs:
       id: plan
       run: |
         cd terraform
-        terraform plan -no-color -out=tfplan.out
-      continue-on-error: true
+        terraform plan -no-color -out=tfplan \
+          -var="api_ingestion_bucket_name=${{ secrets.API_INGESTION_BUCKET_NAME }}" \
+          -var="data_lake_bucket_name=${{ secrets.DATA_LAKE_BUCKET_NAME }}"
     
     - name: Upload Terraform Plan
       uses: actions/upload-artifact@v3
       with:
         name: terraform-plan
-        path: terraform/tfplan.out
+        path: terraform/tfplan
         retention-days: 1
     
     - name: Terraform Plan Status
@@ -113,20 +113,15 @@ jobs:
         name: terraform-plan
         path: terraform
     
-    - name: List Terraform Directory
-      run: |
-        ls -la terraform
-    
     - name: Terraform Init
       run: |
         cd terraform
         terraform init \
           -backend-config="bucket=${{ secrets.TF_STATE_BUCKET }}" \
           -backend-config="key=data-pipeline/terraform.tfstate" \
-          -backend-config="region=${{ env.AWS_REGION }}" \
-          -lock=false
+          -backend-config="region=${{ env.AWS_REGION }}"
     
     - name: Terraform Apply
       run: |
         cd terraform
-        terraform apply -auto-approve tfplan.out
+        terraform apply -auto-approve tfplan
