@@ -5,16 +5,19 @@ terraform {
       version = "~> 4.0"
     }
   }
-  
-  # Configure S3 backend for state management
+
+
+
+terraform {
   backend "s3" {
     bucket         = "topdevs-terraform-state"
-    key            = "projects/retail-end-to-end-pipeline/terraform.tfstate"
+    key            = "terraform/state"
     region         = "eu-north-1"
-    encrypt        = true
-    dynamodb_table = "terraform-state-lock"
+    dynamodb_table = "terraform-state-locks"
   }
 }
+  
+
 
 provider "aws" {
   region = var.aws_region
