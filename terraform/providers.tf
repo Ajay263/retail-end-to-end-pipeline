@@ -6,9 +6,6 @@ terraform {
     }
   }
 
-
-
-terraform {
   backend "s3" {
     bucket         = "topdevs-terraform-state"
     key            = "terraform/state"
@@ -16,8 +13,6 @@ terraform {
     dynamodb_table = "terraform-state-locks"
   }
 }
-  
-
 
 provider "aws" {
   region = var.aws_region
